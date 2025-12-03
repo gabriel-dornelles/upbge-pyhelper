@@ -1,13 +1,17 @@
+# I need to create this function because blender/upbge keeps the module in memory once it's loaded
+# so this "init" will never be executed again unless the module is reloaded.
+# and since I only need to reload the submodules, this initialization function does the trick;
+# just don't forget to call it.
 def init():
-    import bge
-    import importlib
     import sys
 
-    for module in list(sys.modules):
-        if module.startswith("pyhelper."):
-            del sys.modules[module]
-    
-    importlib.import_module("pyhelper.delta_time")
-    importlib.import_module("pyhelper.decorators")
-    importlib.import_module("pyhelper.mouse")
-    importlib.import_module("pyhelper.keyboard")
+    for m in list(sys.modules):
+        if m.startswith("pyhelper."):
+            del sys.modules[m]
+
+    from . import delta_time
+    from . import decorators
+    from . import mouse
+    from . import keyboard
+
+    del globals()['delta_time']

@@ -14,4 +14,6 @@ def init():
     from . import mouse
     from . import keyboard
 
-    del globals()['delta_time']
+    for m in ['init', 'delta_time', 'mouse', 'keyboard']:
+        del globals()[m]
+    

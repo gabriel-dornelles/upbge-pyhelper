@@ -9,7 +9,7 @@ if hasattr(bge, "logic"):
 
 	class PyMouse:
 		def __init__(self):
-			self.__device         = bge.logic.mouse
+			self.device           = bge.logic.mouse
 			self.__old_position   = mathutils.Vector((0.0, 0.0))
 			self.__delta_position = mathutils.Vector((0.0, 0.0))
 			self.__first_frame    = True
@@ -19,24 +19,24 @@ if hasattr(bge, "logic"):
 			self.__init_keys__()
 		
 		def __getattr__(self, attr):
-			return getattr(self.__device, attr)
+			return getattr(self.device, attr)
 			
 		def __setattr__(self, attr, value):
-			if f'_{self.__class__.__name__}__device' in self.__dict__.keys():
-				if attr in dir(self.__device.__class__):
-					setattr(self.__device, attr, value)
+			if f'_{self.__class__.__name__}device' in self.__dict__.keys():
+				if attr in dir(self.device.__class__):
+					setattr(self.device, attr, value)
 					return
 
 			super().__setattr__(attr, value)
 		
 		def __init_keys__(self):
 			for key in KEY_LIST["mouse"]:
-				k_input = self.__device.inputs[getattr(bge.events, key)]
+				k_input = self.device.inputs[getattr(bge.events, key)]
 				setattr(self, key, k_input)
 
 		@once_per_tick
 		def __get_delta_position__(self):
-			mouse_pos = mathutils.Vector(self.__device.position)
+			mouse_pos = mathutils.Vector(self.device.position)
 
 			if self.__first_frame:
 				self.__first_frame  = False
@@ -79,6 +79,4 @@ if hasattr(bge, "logic"):
 			self.__old_position.x = (width * 0.5) / width
 			self.__old_position.y = (height * 0.5) / height
 
-			self.__device.position = (0.5, 0.5)
-	
-	bge.logic.pymouse = PyMouse()
+			self.device.position = (0.5, 0.5)

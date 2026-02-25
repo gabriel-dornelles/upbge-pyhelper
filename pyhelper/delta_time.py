@@ -1,27 +1,26 @@
-import bge
+class DeltaTime:
+    def __init__(self):
+        self.monotonic_time = None
+        self.timescale      = 0.0
 
-if hasattr(bge, "logic"):
-    from .decorators import once_per_tick
+        self.__is_first_frame = True
+        self.__previous_time  = 0.0
+        self.__delta_time     = 0.0
+    
+    def __calculate__(self, is_scaled):
+        if self.monotonic_time is None or self.timescale == 0.0:
+            return
 
-    class DeltaTime:
-        def __init__(self):
-            self.__firstFrame = True
-            self.__previousTime = 0.0
-            self.__deltaTime = 0.0
-        
-        @once_per_tick
-        def __calc__(self, scaled):
-            if self.__firstFrame:
-                self.__firstFrame = False
-                self.__previousTime = bge.logic.getRealTime()
-            else:
-                current = bge.logic.getRealTime()
-                delta = current - self.__previousTime
-                self.__previousTime = current
-                self.__deltaTime = (delta * bge.logic.getTimeScale()) if scaled else delta
-        
-        def deltaTime(self, scaled = True):
-            self.__calc__(scaled)
-            return self.__deltaTime
+        if self.__is_first_frame:
+            self.__is_first_frame = False
+            self.__previous_time  = self.monotonic_time()
+        else:
+            current_time         = self.monotonic_time()
+            delta_time           = current_time - self.__previous_time
+            self.__previous_time = current_time
 
-    bge.logic.deltaTime = DeltaTime().deltaTime
+            self.__delta_time = (delta_time * self.timescale()) if is_scaled else delta_time
+    
+    def deltaTime(self, is_scaled = True):
+        self.__calculate__(is_scaled)
+        return self.__delta_time

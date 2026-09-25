@@ -12,11 +12,10 @@ if hasattr(bge, "logic"):
 			return getattr(self.device, attr)
 			
 		def __setattr__(self, attr, value):
-			if f'_{self.__class__.__name__}device' in self.__dict__.keys():
-				if attr in dir(self.device.__class__):
-					setattr(self.device, attr, value)
-					return
-
+			if 'device' in self.__dict__.keys() and hasattr(self.device, attr):
+				setattr(self.device,attr,value)
+				return
+			
 			super().__setattr__(attr, value)
 		
 		def __init_keys__(self):

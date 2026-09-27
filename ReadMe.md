@@ -8,6 +8,7 @@ A Python module with small functionalities to help with game development on UPBG
 - [x] Decorators (Used to change the behavior of methods)
 - [x] PyKeyboard (A class that extends the SCA_PythonKeyboard class)
 - [x] PyMouse (A class that extends the SCA_PythonMouse class)
+- [x] PyJoystick (A class that represents a joystick)
 - [x] Utils (useful generic methods and variables)
 
 ## How to use?
@@ -77,4 +78,72 @@ wkey = bge.logic.keyboard.WKEY # <-- SCA_InputEvent
 
 if wkey.activated:
     print("W key pressed!")
+```
+
+### PyJoystick
+
+This class represents a joystick (game controller) in UPBGE. When PyHelper is initialized, 8 PyJoystick classes is created in PyJoystickManager and synched with SCA_PythonJoystick from UPBGE in bge.logic.joysticks list.
+
+#### Using
+
+```python
+# after initialized PyHelper...
+
+joyMgr = bge.logic.joystickManager
+
+# in your main component (only once)
+class MyComponent(...):
+    def start(self):
+        joyMgr.init() # <- initialize joystickManager
+    
+    def update(self):
+        joyMgr.update() # <- update to sync joysticks
+        # or you can append the update method in scene pre_update callback
+        # self.object.scene.pre_draw.append(joyMgr.update)
+
+# then you can get the joystick
+joy = joyMgr.get_joystick(0) # get first joystick index 0
+joy = joyMgr.get_joystick_list()[0] # or get from a list
+
+# be careful: joy will not be None but the SCA_PythonJoystick could be.
+# if the joystick from UPBGE is None your joystick will not work.
+
+# list of buttons in our joystick:
+joy.button["A"]
+joy.button["B"]
+joy.button["X"]
+joy.button["Y"]
+joy.button["SELECT"]
+joy.button["HOME"]
+joy.button["START"]
+joy.button["L3"]
+joy.button["R3"]
+joy.button["LB"]
+joy.button["RB"]
+joy.button["PADUP"]
+joy.button["PADDOWN"]
+joy.button["PADLEFT"]
+joy.button["PADRIGHT"]
+
+# checking button status:
+
+status = joy.button["A"].active # if the button is being pressed
+status = joy.button["A"].activated # if the button was pressed (only once)
+status = joy.button["A"].released # if the button has been released
+
+# list of axis in our joystick:
+joy.axis["LEFT_AXIS"]
+joy.axis["RIGHT_AXIS"]
+
+# checking axis values:
+
+values = joy.axis["LEFT_AXIS"].values # return a float tuple -> (0.0, 0.0)
+
+# list of triggers in our joystick:
+joy.trigger["LEFT"]
+joy.trigger["RIGHT"]
+
+# checking trigger value
+
+value = joy.trigger["LEFT"].value # return a float value -> 0.0
 ```

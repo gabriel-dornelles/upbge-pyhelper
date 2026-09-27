@@ -34,5 +34,6 @@ def init():
     # from "cls.device" attribute.
     bge.logic.keyboard = inputs.PyKeyboard()
     bge.logic.mouse = inputs.PyMouse()
+    bge.logic.joystickManager = inputs.PyJoystickManager()
 
     del globals()['inputs']
